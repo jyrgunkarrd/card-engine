@@ -1,0 +1,10 @@
+{
+    "id": "card-engine",
+    "title": "Card Engine (Milestone 2 – Card Images)",
+    "description": "Right-click cards to set/clear an image via a stable dialog; thumbnails render in pool and decks.",
+    "version": "0.9.3",
+    "authors": [{ "name": "Kevin Brown & GPT-5 Thinking" }],
+    "compatibility": { "minimum": "13", "verified": "13", "maximum": "13" },
+    "esmodules": ["scripts/module.js"],
+    "styles": ["styles/card-engine.css"]
+}

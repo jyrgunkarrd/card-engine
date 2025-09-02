@@ -1,0 +1,673 @@
+/* ---------------- Base Layout ---------------- */
+.ce-app {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.ce-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-bottom: 1px solid #333;
+    background: #1e1e1e;
+    color: #fff;
+}
+
+.ce-header h3 {
+    margin: 0;
+}
+
+.ce-header small {
+    margin-left: 8px;
+    color: #aaa;
+}
+
+.ce-header .spacer {
+    flex: 1;
+}
+
+.ce-header .ce-btn {
+    background: #333;
+    border: 1px solid #555;
+    padding: 3px 8px;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.ce-header .ce-btn:hover {
+    background: #444;
+}
+
+/* Search + Sort */
+.ce-controls {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.ce-controls input#ce-search {
+    min-width: 200px; /* or 250px / 300px depending on taste */
+    flex: 1;
+
+}
+/* Force search box text to white */
+#ce-search {
+color: #fff !important;
+}
+.ce-controls select {
+    background: #222;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: #fff;
+    padding: 2px 6px;
+    font-size: 13px;
+}
+
+/* ---------------- Columns + Panels ---------------- */
+.ce-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.ce-columns {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 8px;
+    overflow: hidden;
+}
+
+.ce-panel {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #333;
+    border-radius: 6px;
+    background: #181818;
+    overflow: hidden;
+}
+
+.ce-panel-title {
+    padding: 4px 8px;
+    background: #222;
+    border-bottom: 1px solid #333;
+    font-weight: bold;
+    color: #eee;
+}
+
+.ce-panel-actions {
+    padding: 4px 8px;
+    border-bottom: 1px solid #333;
+    background: #202020;
+}
+
+.ce-pool,
+.ce-decks {
+    flex: 1;
+    padding: 6px;
+    overflow-y: auto;
+}
+
+.ce-empty {
+    color: #777;
+    font-size: 13px;
+    padding: 6px;
+}
+
+.ce-empty.small {
+    font-size: 12px;
+    text-align: center;
+}
+/* Default: 3 columns (Master | Pool | Decks) */
+.ce-columns {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* When Master is hidden: 2 columns (Pool | Decks) */
+.ce-columns.no-master {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+/* ---------------- Cards ---------------- */
+.ce-card {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 88px;
+    margin: 4px;
+    padding: 4px;
+    border: 2px solid #555;
+    border-radius: 6px;
+    background: #2a2a2a;
+    cursor: grab;
+    position: relative;
+}
+
+.ce-card img.ce-thumb {
+    max-width: 100%;
+    max-height: 100px;
+    border-radius: 3px;
+    pointer-events: none; /* ensure drag works from image */
+}
+
+.ce-card .ce-caption {
+    margin-top: 2px;
+    font-size: 12px;
+    text-align: center;
+    color: #ddd;
+}
+
+.ce-card .ce-rarity {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 14px;
+    height: 14px;
+}
+
+.ce-card .ce-rarity svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Rarity borders */
+.ce-card.rarity-common    { border-color: #fff; }
+.ce-card.rarity-uncommon  { border-color: #22c55e; }
+.ce-card.rarity-rare      { border-color: #3b82f6; }
+.ce-card.rarity-set       { border-color: #ec4899; }
+.ce-card.rarity-legendary { border-color: #ef4444; }
+.ce-card.rarity-unique    { border-color: #ffd54a; }
+
+/* ---------------- Decks ---------------- */
+.ce-deck {
+    border: 1px solid #444;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    background: #202020;
+}
+
+.ce-deck-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 6px;
+    border-bottom: 1px solid #333;
+    background: #2a2a2a;
+}
+
+.ce-deck-name {
+    font-weight: bold;
+    color: #eee;
+}
+
+.ce-deck-actions .ce-icon {
+    background: none;
+    border: none;
+    color: #ccc;
+    cursor: pointer;
+    margin-left: 4px;
+}
+
+.ce-deck-actions .ce-icon:hover {
+    color: #fff;
+}
+
+.ce-deck-body {
+    min-height: 60px;
+    padding: 6px;
+    display: flex;
+    flex-wrap: wrap;
+}
+/* Style the dropdown list background + text */
+#ce-sort,
+#ce-sort option {
+background: #111 !important; /* black background */
+color: #fff !important;      /* white text */
+}
+
+/* ---------------- Tooltip Portal ---------------- */
+#ce-tooltip {
+position: fixed;
+z-index: 2147483647;
+display: none;
+max-width: 420px;
+padding: 10px 12px;
+border-radius: 8px;
+border: 1px solid rgba(255,255,255,0.18);
+background: rgba(20,22,28,0.98);
+color: #fff;
+box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+pointer-events: auto;
+line-height: 1.25;
+font-size: 13px;
+}
+
+#ce-tooltip p { margin: 0 0 6px; }
+#ce-tooltip p:last-child { margin-bottom: 0; }
+#ce-tooltip a { color: #8ab4ff; text-decoration: none; }
+#ce-tooltip a:hover { text-decoration: underline; }
+#ce-tooltip code { background: rgba(255,255,255,0.08); padding: 1px 3px; border-radius: 3px; }
+#ce-tooltip hr { border: none; border-top: 1px solid rgba(255,255,255,0.12); margin: 8px 0; }
+
+/* ---------------- Misc ---------------- */
+.is-hidden { display: none !important; }
+.dragover { outline: 2px dashed #aaa; }
+
+/* ----- Column visibility combos (Master | Pool | Piles) ----- */
+.ce-columns.no-pool { grid-template-columns: repeat(2, 1fr); }
+.ce-columns.no-piles { grid-template-columns: repeat(2, 1fr); }
+.ce-columns.no-master.no-pool,
+.ce-columns.no-master.no-piles,
+.ce-columns.no-pool.no-piles { grid-template-columns: 1fr; }
+.ce-columns.no-master.no-pool.no-piles { grid-template-columns: 1fr; }
+
+/* ----- Tabs for Piles ----- */
+.ce-tabs {
+    display: flex;
+    gap: 6px;
+    padding: 4px 8px;
+    border-bottom: 1px solid #333;
+    background: #202020;
+}
+.ce-tab {
+    background: #2a2a2a;
+    border: 1px solid #444;
+    padding: 4px 8px;
+    border-radius: 6px;
+    color: #ddd;
+    cursor: pointer;
+}
+.ce-tab.active { background: #333; color: #fff; border-color: #666; }
+.ce-tab .count { opacity: 0.7; margin-left: 4px; }
+
+/* ----- Subpanels in Piles ----- */
+.ce-subpanel { padding: 6px; overflow-y: auto; }
+.ce-subpanel-actions {
+    padding: 4px 8px;
+    border-bottom: 1px solid #333;
+    background: #202020;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+/* ----- Hand components ----- */
+.ce-hand {
+    border: 1px solid #444;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    background: #202020;
+}
+.ce-hand-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 6px;
+    border-bottom: 1px solid #333;
+    background: #2a2a2a;
+}
+.ce-hand-name { font-weight: bold; color: #eee; }
+.ce-hand-controls { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.ce-hand-controls select {
+    background: #222;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: #fff;
+    padding: 2px 6px;
+    font-size: 13px;
+}
+.ce-hand-body { min-height: 60px; padding: 6px; display: flex; flex-wrap: wrap; }
+
+/* ----- Discard components ----- */
+.ce-discard {
+    border: 1px solid #444;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    background: #202020;
+}
+.ce-discard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 6px;
+    border-bottom: 1px solid #333;
+    background: #2a2a2a;
+}
+.ce-discard-name { font-weight: bold; color: #eee; }
+.ce-discard-body { min-height: 60px; padding: 6px; display: flex; flex-wrap: wrap; }
+
+/* Two-zone layout within each hand */
+.ce-hand-zones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 6px;
+}
+
+.ce-zone {
+    border: 1px solid #333;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #1b1b1b;
+}
+
+.ce-zone-title {
+    font-weight: 600;
+    padding: 4px 6px;
+    border-bottom: 1px solid #2a2a2a;
+    background: #232323;
+    color: #ddd;
+}
+
+.ce-hand-discard-body,
+.ce-hand-body {
+    min-height: 60px;
+    padding: 6px;
+    display: flex;
+    flex-wrap: wrap;
+}
+/* Stack Hand and Discard vertically */
+.ce-hand-zones {
+    grid-template-columns: 1fr; /* was: 1fr 1fr */
+}
+/* Hand controls in one horizontal line */
+.ce-hand-controls {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    align-items: center;
+}
+.ce-hand-controls label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.ce-hand-controls select {
+    max-width: 120px;
+}
+/* Dark theme for deck select in Hand panels */
+.ce-hand-controls select.ce-hand-select-deck,
+.ce-hand-controls select.ce-hand-select-deck option {
+    background: #000 !important;  /* black background */
+    color: #fff !important;       /* white text */
+}
+/* Make Deck CRUD buttons horizontal */
+.ce-deck-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    align-items: center;
+}
+
+.ce-deck-actions .ce-icon {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+/* Booster column */
+#ce-boosters {
+display: grid;
+grid-template-columns: 1fr;
+gap: 8px;
+}
+
+.ce-pack {
+    width: 120px;              /* match your .ce-card width if different */
+    height: 160px;             /* match your .ce-card height if different */
+    border: 1px solid #333;
+    border-radius: 8px;
+    background: #151515;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+    transition: transform .08s ease, box-shadow .08s ease, border-color .08s ease;
+}
+
+.ce-pack:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0,0,0,.35);
+    border-color: #555;
+}
+
+.ce-pack .ce-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ce-pack .ce-caption {
+    position: absolute;
+    left: 6px;
+    bottom: 6px;
+    font-weight: 600;
+    font-size: 12px;
+    background: rgba(0,0,0,.6);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.ce-pack-faux {
+    padding: 8px;
+    text-align: center;
+    font-weight: 700;
+    color: #ddd;
+}
+
+/* Small hint line */
+.ce-hint.small {
+    margin-top: 6px;
+    font-size: 11px;
+    color: #aaa;
+    opacity: .85;
+}
+
+/* Ensure pack tiles aren’t draggable by child media */
+.ce-pack [draggable="true"] { draggable: false !important; }
+
+/* Deck actions horizontal (from earlier) */
+.ce-deck-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    align-items: center;
+}
+
+/* Hand controls in a single row (from earlier) */
+.ce-hand-controls {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    align-items: center;
+}
+.ce-hand-controls label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.ce-hand-controls select {
+    max-width: 120px;
+}
+
+/* Dark theme for Hand panel deck select */
+.ce-hand-controls select.ce-hand-select-deck,
+.ce-hand-controls select.ce-hand-select-deck option {
+    background: #000 !important;
+    color: #fff !important;
+}
+/* Booster pack caption text */
+.ce-pack .ce-caption {
+    color: #fff !important;
+}
+/* Make booster pack column scrollable */
+#ce-boosters {
+max-height: 100%;        /* limit to panel height */
+overflow-y: auto;        /* vertical scroll if needed */
+padding-right: 4px;      /* space for scrollbar */
+}
+/* Keep columns on one row */
+.ce-columns {
+    display: flex;           /* if it's already flex, this is harmless */
+    gap: 8px;
+    flex-wrap: nowrap;       /* prevent the second row */
+    align-items: stretch;
+}
+
+/* Let normal panels flex to fill remaining space */
+.ce-panel {
+    flex: 1 1 0;
+    min-width: 0;            /* allow content to shrink without forcing wrap */
+}
+
+/* Booster panel: narrow, fixed width roughly equal to a pack tile */
+.ce-panel-boosters {
+    flex: 0 0 138px;         /* adjust to match your .ce-pack width + padding */
+    max-width: 138px;
+    min-width: 138px;
+}
+
+/* Make the booster list scroll within its panel (so it doesn’t demand height) */
+#ce-boosters {
+max-height: 100%;
+overflow-y: auto;
+padding-right: 4px;
+}
+
+/* Optional: slightly tighter title to save vertical space in the booster panel */
+.ce-panel-boosters .ce-panel-title {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+/* Small pill in top-left of cards showing tag */
+.ce-tag-pill {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 4px;
+    border-radius: 8px;
+    pointer-events: none; /* don’t block dragging */
+    z-index: 2;
+}
+.ce-card {
+    position: relative;
+    /* existing styles… */
+}
+/* ----- Hand Slots (two rows of five) ----- */
+.ce-hand-slots {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    padding: 6px;
+}
+
+.ce-slot {
+    position: relative;
+    width: 70px;           /* match .ce-card width for a consistent feel */
+    height: 70px;         /* card-ish aspect */
+    border: 1px dashed #444;
+    border-radius: 6px;
+    background: #141414;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: default;
+}
+
+.ce-slot.dragover { outline: 2px dashed #aaa; }
+
+.ce-slot .ce-slot-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: .9;
+}
+
+.ce-slot-faux {
+    font-size: 11px;
+    color: #777;
+}
+
+/* a card occupying a slot "covers" the image */
+.ce-slot-card {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    border: 2px solid #555;
+    border-radius: 6px;
+    background: #2a2a2a;
+    overflow: hidden;
+}
+
+.ce-slot-card img.ce-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ce-slot-card .ce-caption {
+    position: absolute;
+    left: 4px;
+    bottom: 4px;
+    font-size: 11px;
+    background: rgba(0,0,0,.6);
+    padding: 2px 4px;
+    border-radius: 4px;
+    color: #ddd;
+}
+
+.ce-slot-card .ce-rarity {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 14px;
+    height: 14px;
+}
+
+#ce-tooltip {
+pointer-events: auto !important; /* in case something overrides it */
+max-height: 60vh;
+overflow: auto;
+}
+/* Keep TinyMCE toolbar tidy inside our editor dialogs */
+.ce-hand-controls label {
+    color: #fff;
+}
+.ce-hand-controls label select {
+    color: initial;   /* let the dropdown keep its normal text color */
+}
+.ce-tabs .spacer { flex: 1; }
+.ce-tabs .ce-input {
+        min-width: 180px;
+        background: #222;
+        border: 1px solid #555;
+        border-radius: 4px;
+        color: #fff;
+        padding: 2px 6px;
+        font-size: 13px;
+    }

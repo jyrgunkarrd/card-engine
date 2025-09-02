@@ -1,0 +1,357 @@
+<section class="ce-app">
+  <header class="ce-header">
+    <h3>Card Engine</h3>
+    <small>Milestone 3 · Master Database & Piles</small>
+
+    <div class="spacer"></div>
+
+    <!-- Show/Hide Master, Pool, Piles -->
+    <button type="button" id="ce-toggle-master" class="ce-btn">
+      <i class="fas fa-database"></i> Master DB
+    </button>
+    <button type="button" id="ce-toggle-pool" class="ce-btn">
+      <i class="fas fa-inbox"></i> Pool
+    </button>
+    <button type="button" id="ce-toggle-piles" class="ce-btn">
+      <i class="fas fa-layer-group"></i> Piles
+    </button>
+    <button type="button" id="ce-toggle-boosters" class="ce-btn">
+  <i class="fas fa-box-open"></i> Boosters
+</button>
+
+
+    <!-- Search + Sort -->
+    <div class="ce-controls">
+      <input id="ce-search" type="text" placeholder="Search name/type/rarity/tags…" />
+      <select id="ce-sort">
+        <option value="name-asc">Sort: Name A–Z</option>
+        <option value="name-desc">Sort: Name Z–A</option>
+        <option value="rarity-asc">Sort: Rarity ↑</option>
+        <option value="rarity-desc">Sort: Rarity ↓</option>
+        <option value="type-asc">Sort: Type A–Z</option>
+        <option value="type-desc">Sort: Type Z–A</option>
+      </select>
+    </div>
+  </header>
+
+  <div class="ce-body">
+    <div class="ce-columns
+      {{#unless showMaster}}no-master{{/unless}}
+      {{#unless showPool}}no-pool{{/unless}}
+      {{#unless showPiles}}no-piles{{/unless}}">
+      <!-- BOOSTER PACKS -->
+<div class="ce-panel ce-panel-boosters {{#unless showBoosters}}is-hidden{{/unless}}">
+  <div class="ce-panel-title">Booster Packs</div>
+  <div id="ce-boosters" class="ce-boosters">
+    {{#each boosters}}
+      <div class="ce-pack" data-pack-type="{{this.key}}" title="{{this.label}}">
+        {{#if this.img}}
+          <img class="ce-thumb" src="{{this.img}}" alt="{{this.label}}"/>
+          <div class="ce-caption">{{this.label}}</div>
+        {{else}}
+          <div class="ce-pack-faux">{{this.label}}</div>
+        {{/if}}
+      </div>
+    {{/each}}
+  </div>
+  <div class="ce-hint small">Click to open · Right-click to set image</div>
+</div>
+
+
+      <!-- MASTER DATABASE -->
+      <div class="ce-panel {{#unless showMaster}}is-hidden{{/unless}}">
+        <div class="ce-panel-title">Master Database</div>
+        <div class="ce-panel-actions">
+          <button type="button" id="ce-create-master-card" class="ce-btn">
+            <i class="fas fa-plus"></i> Create Card
+          </button>
+        </div>
+
+        <div id="ce-master" class="ce-pool" data-source="master">
+          {{#if masterFiltered.length}}
+            {{#each masterFiltered}}
+              <div class="ce-card {{rarityClass this.id}}" data-card-id="{{this.id}}" data-source="master">
+                <div class="ce-tag-pill">
+    {{#if (lookupCardTags this.id)}}
+      {{firstTag (lookupCardTags this.id)}}
+    {{/if}}
+  </div>
+                {{#if this.img}}
+                  <img class="ce-thumb" src="{{this.img}}" alt="{{lookupCardName this.id}}"/>
+                  <div class="ce-caption">{{lookupCardName this.id}}</div>
+                {{else}}
+                  <span>{{lookupCardName this.id}}</span>
+                {{/if}}
+                <div class="ce-rarity" title="Rarity: {{lookupCardRarity this.id}}">
+                  {{{rarityIcon this.id}}}
+                </div>
+              </div>
+            {{/each}}
+          {{else}}
+            <p class="ce-empty">No cards yet. Click <b>Create Card</b> to add one.</p>
+          {{/if}}
+        </div>
+      </div>
+
+      <!-- CARD POOL -->
+      <div class="ce-panel {{#unless showPool}}is-hidden{{/unless}}">
+        <div class="ce-panel-title">Card Pool</div>
+        <div id="ce-pool" class="ce-pool" data-source="pool">
+          {{#if cards.length}}
+            {{#each cards}}
+              <div class="ce-card {{rarityClass this.id}}" data-card-id="{{this.id}}" data-source="pool">
+                <div class="ce-tag-pill">
+    {{#if (lookupCardTags this.id)}}
+      {{firstTag (lookupCardTags this.id)}}
+    {{/if}}
+  </div>
+                {{#if this.img}}
+                  <img class="ce-thumb" src="{{this.img}}" alt="{{lookupCardName this.id}}"/>
+                  <div class="ce-caption">{{lookupCardName this.id}}</div>
+                {{else}}
+                  <span>{{lookupCardName this.id}}</span>
+                {{/if}}
+                <div class="ce-rarity" title="Rarity: {{lookupCardRarity this.id}}">
+                  {{{rarityIcon this.id}}}
+                </div>
+              </div>
+            {{/each}}
+          {{else}}
+            <p class="ce-empty">No loose cards. Drag from <b>Master</b> or from decks.</p>
+          {{/if}}
+        </div>
+      </div>
+
+      <!-- PILES (Decks | Hands | Discards) -->
+      <div class="ce-panel {{#unless showPiles}}is-hidden{{/unless}}">
+        <div class="ce-panel-title">Piles</div>
+        <div class="ce-tabs">
+          <button class="ce-tab {{activeTabClass 'decks' activePileTab}}" data-tab="decks">
+            Decks <span class="count">({{decks.length}})</span>
+          </button>
+          <button class="ce-tab {{activeTabClass 'hands' activePileTab}}" data-tab="hands">
+            Hands <span class="count">({{hands.length}})</span>
+          </button>
+          <div class="spacer"></div>
+          <input id="ce-pile-search" class="ce-input"
+                 type="text" placeholder="Filter decks / hands…"/>
+        </div>
+
+        <!-- DECKS TAB -->
+        <div class="ce-subpanel" data-panel="decks" {{#unless tabs.isDecks}}style="display:none"{{/unless}}>
+          <div class="ce-subpanel-actions">
+            <button type="button" id="ce-create-deck" class="ce-btn">
+              <i class="fas fa-folder-plus"></i> Create Deck
+            </button>
+          </div>
+          <div class="ce-decks">
+            {{#if decks.length}}
+              {{#each decks}}
+                <div class="ce-deck" data-deck-id="{{this.id}}" data-source="deck:{{this.id}}">
+                  <div class="ce-deck-header">
+                    <div class="ce-deck-name">{{this.name}} ({{this.count}})</div>
+                    <div class="ce-deck-actions">
+                                          <!-- NEW: per-deck collapse toggle -->
+                      <button class="ce-btn ce-deck-action"
+                              data-action="collapse"
+                              title="{{#if this.collapsed}}Open{{else}}Close{{/if}}">
+                        {{#if this.collapsed}}Open{{else}}Close{{/if}}
+                      </button>
+                      <button class="ce-icon ce-deck-action" data-action="rename" title="Rename">
+                        <i class="fas fa-i-cursor"></i>
+                      </button>
+                      <button class="ce-icon ce-deck-action" data-action="clear" title="Clear to Pool">
+                        <i class="fas fa-broom"></i>
+                      </button>
+                      <button class="ce-icon ce-deck-action" data-action="delete" title="Delete Deck">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="ce-deck-body" {{#if this.collapsed}}style="display:none"{{/if}}>
+                    {{#if this._cardsForRender.length}}
+                      {{#each this._cardsForRender}}
+                        <div class="ce-card {{rarityClass this.id}}" data-card-id="{{this.id}}" data-source="deck:{{../id}}">
+                          <div class="ce-tag-pill">
+    {{#if (lookupCardTags this.id)}}
+      {{firstTag (lookupCardTags this.id)}}
+    {{/if}}
+  </div>
+                          {{#if this.img}}
+                            <img class="ce-thumb" src="{{this.img}}" alt="{{lookupCardName this.id}}"/>
+                            <div class="ce-caption">{{lookupCardName this.id}}</div>
+                          {{else}}
+                            <span>{{lookupCardName this.id}}</span>
+                          {{/if}}
+                          <div class="ce-rarity" title="Rarity: {{lookupCardRarity this.id}}">
+                            {{{rarityIcon this.id}}}
+                          </div>
+                        </div>
+                      {{/each}}
+                    {{else}}
+                      <div class="ce-empty small">Drop cards here</div>
+                    {{/if}}
+                  </div>
+                </div>
+              {{/each}}
+            {{else}}
+              <p class="ce-empty">No decks yet. Click <b>Create Deck</b> to add one.</p>
+            {{/if}}
+          </div>
+        </div>
+
+        <!-- HANDS TAB -->
+        <div class="ce-subpanel" data-panel="hands" {{#unless tabs.isHands}}style="display:none"{{/unless}}>
+          <div class="ce-subpanel-actions">
+            <button type="button" id="ce-create-hand" class="ce-btn">
+              <i class="fas fa-hand-paper"></i> Create Hand
+            </button>
+          </div>
+          <div id="ce-hands">
+            {{#if hands.length}}
+              {{#each hands}}
+<div class="ce-hand" data-hand-id="{{this.id}}" data-source="hand:{{this.id}}">
+  <div class="ce-hand-header">
+    <div class="ce-hand-name">{{this.name}} ({{this.count}})</div>
+<div class="ce-hand-controls">
+  <!-- NEW: per-hand collapse toggle -->
+  <button class="ce-btn ce-hand-action"
+          data-action="collapse"
+          data-hand-id="{{this.id}}"
+          title="{{#if this.collapsed}}Open{{else}}Close{{/if}}">
+    {{#if this.collapsed}}Open{{else}}Close{{/if}}
+  </button>
+  <label>Deck
+    <select class="ce-hand-select-deck" data-hand-id="{{this.id}}">
+      <option value="">—</option>
+      {{#each ../selectDecks}}
+        <option value="{{this.id}}" {{selIfEq this.id ../srcDeckId}}>{{this.name}}</option>
+      {{/each}}
+    </select>
+  </label>
+
+  <button class="ce-btn ce-hand-op" data-op="drawRandom" data-hand-id="{{this.id}}">Draw</button>
+  <button class="ce-btn ce-hand-op" data-op="mulligan" data-hand-id="{{this.id}}">Mulligan</button>
+  <button class="ce-btn ce-hand-op" data-op="dumpAll" data-hand-id="{{this.id}}">Reset</button>
+
+  <button class="ce-icon ce-hand-action" data-action="clear" data-hand-id="{{this.id}}" title="Clear to Pool">
+    <i class="fas fa-broom"></i>
+  </button>
+  <button class="ce-icon ce-hand-action" data-action="rename" data-hand-id="{{this.id}}" title="Rename">
+    <i class="fas fa-i-cursor"></i>
+  </button>
+  <button class="ce-icon ce-hand-action" data-action="delete" data-hand-id="{{this.id}}" title="Delete Hand">
+    <i class="fas fa-trash"></i>
+  </button>
+</div>
+
+  </div>
+
+  <!-- NEW: two-zone layout -->
+  <div class="ce-hand-zones" {{#if this.collapsed}}style="display:none"{{/if}}>
+    <div class="ce-zone">
+      <div class="ce-zone-title">Hand</div>
+      <div class="ce-hand-body">
+        {{#if this._cardsForRender.length}}
+          {{#each this._cardsForRender}}
+            <div class="ce-card {{rarityClass this.id}}" data-card-id="{{this.id}}" data-source="hand:{{../id}}">
+              <div class="ce-tag-pill">
+    {{#if (lookupCardTags this.id)}}
+      {{firstTag (lookupCardTags this.id)}}
+    {{/if}}
+  </div>
+              {{#if this.img}}
+                <img class="ce-thumb" src="{{this.img}}" alt="{{lookupCardName this.id}}"/>
+                <div class="ce-caption">{{lookupCardName this.id}}</div>
+              {{else}}
+                <span>{{lookupCardName this.id}}</span>
+              {{/if}}
+              <div class="ce-rarity" title="Rarity: {{lookupCardRarity this.id}}">{{{rarityIcon this.id}}}</div>
+            </div>
+          {{/each}}
+        {{else}}
+          <div class="ce-empty small">Drop cards here</div>
+        {{/if}}
+      </div>
+    </div>
+        <!-- SLOTS: two rows of five -->
+{{!-- small helper to display human slot numbers --}}
+{{!-- register in JS; kept here to show usage: inc --}}
+
+
+        <div class="ce-zone">
+      <div class="ce-zone-title">Slots</div>
+      <div class="ce-hand-slots" data-hand-id="{{this.id}}">
+        {{!-- 10 fixed slots, index 0..9 --}}
+        {{#each this._slotsForRender}}
+          <div class="ce-slot"
+               data-slot-idx="{{@index}}"
+               data-hand-id="{{../id}}"
+              {{#if this.card}}data-card-id="{{this.card.id}}"{{/if}}
+               title="Slot {{inc @index}}">
+            {{#if this.card}}
+<div class="ce-slot-card {{rarityClass this.card.id}}"
+     data-card-id="{{this.card.id}}">
+  {{#if this.card.img}}
+    <img class="ce-thumb" src="{{this.card.img}}" alt="{{lookupCardName this.card.id}}"/>
+  {{else}}
+    <span class="ce-caption">{{lookupCardName this.card.id}}</span>
+  {{/if}}
+  <div class="ce-rarity" title="Rarity: {{lookupCardRarity this.card.id}}">
+    {{{rarityIcon this.card.id}}}
+  </div>
+</div>
+            {{else}}
+              {{#if this.img}}
+                <img class="ce-slot-bg" src="{{this.img}}" alt="Slot image"/>
+              {{else}}
+                <div class="ce-slot-faux">Empty</div>
+              {{/if}}
+            {{/if}}
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+
+    <div class="ce-zone">
+      <div class="ce-zone-title">Discard ({{this.discardCount}})</div>
+      <div class="ce-hand-discard-body">
+        {{#if this._discardForRender.length}}
+          {{#each this._discardForRender}}
+            <div class="ce-card {{rarityClass this.id}}" data-card-id="{{this.id}}" data-source="hand-discard:{{../id}}">
+              <div class="ce-tag-pill">
+    {{#if (lookupCardTags this.id)}}
+      {{firstTag (lookupCardTags this.id)}}
+    {{/if}}
+  </div>
+              {{#if this.img}}
+                <img class="ce-thumb" src="{{this.img}}" alt="{{lookupCardName this.id}}"/>
+                <div class="ce-caption">{{lookupCardName this.id}}</div>
+              {{else}}
+                <span>{{lookupCardName this.id}}</span>
+              {{/if}}
+              <div class="ce-rarity" title="Rarity: {{lookupCardRarity this.id}}">{{{rarityIcon this.id}}}</div>
+            </div>
+          {{/each}}
+        {{else}}
+          <div class="ce-empty small">Drop cards here to discard</div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</div>
+
+              {{/each}}
+            {{else}}
+              <p class="ce-empty">No hands yet. Click <b>Create Hand</b> to add one.</p>
+            {{/if}}
+          </div>
+        </div>
+
+        <!-- DISCARDS TAB -->
+      </div>
+
+    </div>
+  </div>
+</section>

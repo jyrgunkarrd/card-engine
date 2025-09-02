@@ -1,0 +1,32 @@
+<form class="card-sheet" style="display:grid; gap:8px;">
+  <div class="form-group">
+    <label>Name</label>
+    <input type="text" name="name" value="{{name}}"/>
+  </div>
+
+  <div class="form-group" style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+    <div>
+      <label>Type</label>
+      <input type="text" name="type" value="{{type}}"/>
+    </div>
+    <div>
+      <label>Rarity</label>
+      <select name="rarity">
+        {{#each rarityOptions}}
+          <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.value}}</option>
+        {{/each}}
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Rules</label>
+    {{!-- Full ProseMirror editor bound to hidden input "rules" --}}
+    {{editor rules engine="prosemirror" target="rules" collaborate=false editable=true button=false}}
+    <input type="hidden" name="rules" value="{{rules}}">
+    <p class="notes">
+      Rich text supports inline rolls <code>[[1d20+5]]</code> and entity links like
+      <code>@Actor[id]{Name}</code>. Drag in images from FilePicker.
+    </p>
+  </div>
+</form>
